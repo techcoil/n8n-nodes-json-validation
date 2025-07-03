@@ -1,6 +1,6 @@
 {
     "name": "n8n-nodes-json-validation",
-    "description": "",
+    "description": "JSON validation n8n node",
     "version": "0.1.0",
     "keywords": [
         "n8n-community-node-package"
