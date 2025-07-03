@@ -30,7 +30,7 @@ export class JsonValidationNode implements INodeType {
                 default: '',
                 required: true,
                 placeholder: '{}',
-                description: 'JSON string',
+                description: 'Value to validate',
             },
             {
                 displayName: 'Schema',
@@ -75,6 +75,9 @@ export class JsonValidationNode implements INodeType {
         let parsedValue: unknown;
 
         try {
+            if (typeof value !== 'string') {
+                parsedValue = value;
+            }
             parsedValue = JSON.parse(value);
         } catch {
             this.helpers.returnJsonArray([
@@ -100,6 +103,7 @@ export class JsonValidationNode implements INodeType {
             this.helpers.returnJsonArray([
                 {
                     validationErrors: validate.errors,
+                    providedValue: value,
                 },
             ]),
         ];
