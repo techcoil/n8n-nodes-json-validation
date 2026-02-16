@@ -19,27 +19,36 @@ export class JsonValidationNode implements INodeType {
         defaults: {
             name: 'JSON Validation',
         },
+        icon: 'file:jv.svg',
         inputs: [NodeConnectionType.Main],
         outputs: [NodeConnectionType.Main],
         usableAsTool: true,
         properties: [
             {
-                displayName: 'Value',
+                displayName: 'Input JSON',
                 name: 'value',
                 type: 'json',
                 default: '',
                 required: true,
                 placeholder: '{}',
-                description: 'Value to validate',
+                description: 'JSON value to validate',
             },
             {
-                displayName: 'Schema',
+                displayName: 'JSON Schema',
                 name: 'schema',
                 type: 'json',
                 required: true,
                 default: '',
                 placeholder: '{}',
-                description: 'JSON Schema',
+                description: 'JSON Schema to validate against',
+            },
+            {
+                displayName: 'Return All Errors',
+                name: 'returnAllErrors',
+                type: 'boolean',
+                default: false,
+                description:
+                    'Whether to return all validation errors or only the first one',
             },
         ],
     };
@@ -47,6 +56,7 @@ export class JsonValidationNode implements INodeType {
     async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
         const value = this.getNodeParameter('value', 0) as string;
         const schema = this.getNodeParameter('schema', 0) as string;
+        const returnAllErrors = this.getNodeParameter('returnAllErrors', 0) as boolean;
 
         let jsonSchema: Schema;
 
@@ -59,7 +69,7 @@ export class JsonValidationNode implements INodeType {
             );
         }
 
-        const ajv = new Ajv();
+        const ajv = new Ajv({ allErrors: returnAllErrors });
         addFormats(ajv);
         let validate: ReturnType<(typeof ajv)['compile']>;
 
